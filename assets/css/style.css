@@ -1,0 +1,13 @@
+body {
+    background-image: url("assets/images/canadianflag.jpg");
+    opacity: 0.5;
+}
+.container {
+    padding: 10px;
+}
+
+.jumbotron {
+    background-color: maroon;
+    color: white;
+    font-weight: bold;
+}
