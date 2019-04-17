@@ -1,5 +1,5 @@
 # TriviaGame
 
-##Test your Canadian knowledge with this trivia quiz!
+## Test your Canadian knowledge with this trivia quiz!
 
-##You have 30 seconds to guess the answer before time's up!
+## You have 30 seconds to guess the answer before time's up!
