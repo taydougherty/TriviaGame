@@ -76,13 +76,14 @@ function runQuiz() {
     $("#image2").hide();
     $("#image3").hide();
 
-    startTime();
+    // startTime();
     showQuestion();
     showChoices();
-    var random = Math.floor(Math.random()*3);
+    questionTimeout = setInterval(startTime, 1000);
+    var random = Math.floor(Math.random()*triviaQuestions.length);
     randomQuestion = triviaQuestions[random];
     $("#question").text(randomQuestion.question);
-    for(var i=0 ; i < randomQuestion.choices.length; i++) {
+    for (var i=0; i < randomQuestion.choices.length; i++) {
         dog = $("<li>");
         dog.text(randomQuestion.choices[i]);
         dog.addClass("list-group-item list-group-item-action flower");
@@ -90,25 +91,23 @@ function runQuiz() {
         $("#choices").append(dog);
     };
     
-// set the timer for 30 seconds
-var questionTimeout = setInterval(startTime, 1000);
-    
 // set if/else for checking the answer
     $(".flower").on("click", function (){
         var ans = randomQuestion.answer;
 
-        if(randomQuestion.answer === parseInt($(this).attr("data-number"))) {
+        if(ans === parseInt($(this).attr("data-number"))) {
             $("#startButton").hide();
             hideChoices();
             hideQuestion();
             clearInterval(questionTimeout);
+            triviaQuestions.splice(random, 1);
             usedQuestions.push(this);
             $("#correct").show();
             $("#image1").show();
             $("#image1").append("<img src='assets/images/correct.gif' />");
             $("#next").show();
-            correct++;   
-            i++;
+            correct++;
+            endGame();   
         }
 
         else {
@@ -116,6 +115,7 @@ var questionTimeout = setInterval(startTime, 1000);
             hideChoices();
             hideQuestion();
             clearInterval(questionTimeout);
+            triviaQuestions.splice(random, 1);
             usedQuestions.push(this);
             $("#wrong").show();
             $("#correct-answer").text("The right answer is: " + randomQuestion.choices[ans]);
@@ -124,11 +124,13 @@ var questionTimeout = setInterval(startTime, 1000);
             $("#image2").append("<img src='assets/images/incorrect.gif' />");
             $("#next").show();
             incorrect++;
-            i++;
+            endGame();
         }
     });
+
 };
 
+var questionTimeout;
 
 // start timer
 function startTime() {
@@ -143,6 +145,7 @@ function startTime() {
         $("#startButton").hide();
         hideChoices();
         hideQuestion();
+        triviaQuestions.splice((Math.floor(Math.random()*triviaQuestions.length)), 1);
         usedQuestions.push(this);
         $("#timesUp").show();
         $("#correct-answer").append(randomQuestion.answer);
@@ -150,7 +153,7 @@ function startTime() {
         $("#image3").append("<img src='assets/images/timesup.gif' />");
         $("#next").show();
         unanswered++;
-        i++;
+        endGame();
     }
 };
 
@@ -171,13 +174,26 @@ $("#next").on("click", function(){
 
 // end the game and display total results
 function endGame(){
-    if(usedQuestions === 4) {
+    if(triviaQuestions.length === 0) {
+        clearInterval(questionTimeout);
         $("#timer").hide();
         hideChoices();
         hideQuestion();
-        $("#correct").text("Correct: " + correct);
-        $("#incorrect").text("Incorrect: " + incorrect);
-        $("#unaswered").text("Unanswered: " + unanswered);
+        $("#correct").hide();
+        $("#correct-answer").hide();
+        $("#wrong").hide();
+        $("#timesUp").hide();
+        $("#next").hide();
+        $("#image1").hide();
+        $("#image2").hide();
+        $("#image3").hide();
+        $("#correct-score").show();
+        $("#incorrect-score").show();
+        $("#unaswered-score").show();
+        $("#correct-score").text("Correct: " + correct);
+        $("#incorrect-score").text("Incorrect: " + incorrect);
+        $("#unaswered-score").text("Unanswered: " + unanswered);
+        $("#restart").show();
         $("#restart").on("click", function(){
             reset();
             runQuiz();
@@ -193,7 +209,6 @@ function reset() {
     timer= 30;
     clearInterval(questionTimeout);
     clockRunning = false;
-    $("#restart").show();
     location.reload();
 };
 
@@ -205,6 +220,5 @@ function startQuiz() {
 };
 
 startQuiz();
-endGame();
 
 });
